@@ -22,6 +22,13 @@ class Preprocessor:
     def save_clean_data(self, output_path):
         self.df.to_csv(output_path, index=False)
 
+    def fetch_tweets(self, n=5):
+        """Fetch the first n tweets from the dataframe."""
+        return self.df.head(n)
+
 if __name__ == "__main__":
     preprocessor = Preprocessor("../data/raw_tweets.csv")
     preprocessor.preprocess()
+  
+    tweets = preprocessor.fetch_tweets(5)
+    print(tweets[['tweet_id', 'username', 'text']])
