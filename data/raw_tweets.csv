@@ -1,0 +1,6 @@
+tweet_id,username,text,sentiment
+1,alice,"I love the new features on Twitter!",positive
+2,bob,"This update is terrible. #disappointed",negative
+3,charlie,"Not sure how I feel about the new design.",neutral
+4,dana,"Twitter is my favorite app!",positive
+5,ed,"Why do they keep changing things?",negative
