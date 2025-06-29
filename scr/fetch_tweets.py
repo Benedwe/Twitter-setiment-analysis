@@ -9,6 +9,6 @@ class TweetFetcher:
         return df.head(n)
 
 if __name__ == "__main__":
-    fetcher = TweetFetcher("../data/raw_tweets.csv")
+    fetcher = TweetFetcher("data/raw_tweets.csv")
     tweets = fetcher.fetch_tweets(5)
     print(tweets[['tweet_id', 'text']])

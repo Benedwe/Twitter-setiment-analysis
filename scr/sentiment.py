@@ -23,4 +23,6 @@ class SentimentAnalyzer:
         self.df.to_csv(output_path, index=False)
 
 if __name__ == "__main__":
-    analyzer = SentimentAnalyzer("../data/raw_tweets.csv")
+    analyzer = SentimentAnalyzer("data/raw_tweets.csv")
+    analyzer.add_sentiment_column()
+    analyzer.save_results("data/tweets_with_sentiment.csv")

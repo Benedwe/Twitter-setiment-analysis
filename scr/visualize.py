@@ -17,5 +17,5 @@ class SentimentVisualizer:
         plt.show()
 
 if __name__ == "__main__":
-    visualizer = SentimentVisualizer("../data/raw_tweets.csv")
+    visualizer = SentimentVisualizer("data/raw_tweets.csv")
     visualizer.plot_sentiment_distribution()

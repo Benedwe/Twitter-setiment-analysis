@@ -27,7 +27,7 @@ class Preprocessor:
         return self.df.head(n)
 
 if __name__ == "__main__":
-    preprocessor = Preprocessor("../data/raw_tweets.csv")
+    preprocessor = Preprocessor("data/raw_tweets.csv")
     preprocessor.preprocess()
   
     tweets = preprocessor.fetch_tweets(5)
