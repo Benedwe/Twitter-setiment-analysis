@@ -118,4 +118,28 @@
         }
     });
 </script>
+<script>
+document.getElementById('analyzeBtn').onclick = async function() {
+    const input = document.getElementById('searchInput').value;
+    if (!input) {
+        alert("Please enter a keyword, hashtag, or tweet.");
+        return;
+    }
+    // Show loading or disable button if you want
+
+    const response = await fetch('/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: input })
+    });
+    const result = await response.json();
+    if (result.error) {
+        alert(result.error);
+        return;
+    }
+    // Show result (for demo, alert; you can update the UI as needed)
+    alert("Sentiment: " + result.sentiment + "\nPolarity: " + result.polarity);
+};
+</script>
 </body>
+</html>
