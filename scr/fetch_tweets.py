@@ -12,5 +12,6 @@ if __name__ == "__main__":
     fetcher = TweetFetcher("data/raw_tweets.csv")
     tweets = fetcher.fetch_tweets(5)
     print(tweets[['tweet_id', 'text']])
+    # Convert the full CSV to JSON for the UI
     df = pd.read_csv('data/raw_tweets.csv')
-df.to_json('scr/raw_tweets.json', orient='records')
+    df.to_json('scr/raw_tweets.json', orient='records')
