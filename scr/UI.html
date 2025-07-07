@@ -114,50 +114,57 @@ const lineChart = new Chart(document.getElementById('lineChart').getContext('2d'
     }
 });
 
-document.getElementById('analyzeBtn').onclick = async function() {
-    const input = document.getElementById('searchInput').value;
+let tweetsData = [];
+
+// Load tweets from local JSON file
+fetch('raw_tweets.json')
+    .then(response => response.json())
+    .then(data => { tweetsData = data; });
+
+document.getElementById('analyzeBtn').onclick = function() {
+    const input = document.getElementById('searchInput').value.trim().toLowerCase();
     if (!input) {
         alert("Please enter a keyword, hashtag, or tweet.");
         return;
     }
-    const response = await fetch('/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: input })
+    // Filter tweets containing the input keyword
+    const filtered = tweetsData.filter(t =>
+        t.text.toLowerCase().includes(input)
+    );
+
+    // Count sentiments
+    let counts = {positive: 0, neutral: 0, negative: 0};
+    let samplesHtml = '';
+    filtered.forEach(t => {
+        counts[t.sentiment] = (counts[t.sentiment] || 0) + 1;
+        const badge = {
+            positive: '<span class="sentiment-badge positive">😀 Positive</span>',
+            neutral: '<span class="sentiment-badge neutral">😐 Neutral</span>',
+            negative: '<span class="sentiment-badge negative">😡 Negative</span>'
+        }[t.sentiment];
+        samplesHtml += `<div class="tweet-sample">${badge} "${t.text}"</div>`;
     });
-    const result = await response.json();
-    if (result.error) {
-        alert(result.error);
-        return;
-    }
-    let idx = {positive: 0, neutral: 1, negative: 2}[result.sentiment];
-    pieChart.data.datasets[0].data[idx]++;
+
+    // Update pie chart
+    pieChart.data.datasets[0].data = [
+        counts.positive,
+        counts.neutral,
+        counts.negative
+    ];
     pieChart.update();
 
-   
-    const badge = {
-        positive: '<span class="sentiment-badge positive">😀 Positive</span>',
-        neutral: '<span class="sentiment-badge neutral">😐 Neutral</span>',
-        negative: '<span class="sentiment-badge negative">😡 Negative</span>'
-    }[result.sentiment];
-    document.getElementById('tweetSamples').innerHTML =
-        `<div class="tweet-sample">${badge} "${input}"</div>` +
-        document.getElementById('tweetSamples').innerHTML;
-
-    alert("Sentiment: " + result.sentiment + "\nPolarity: " + result.polarity);
+    // Show sample tweets
+    document.getElementById('tweetSamples').innerHTML = samplesHtml || "<div>No tweets found.</div>";
 };
 
 document.querySelector('.btn-secondary').onclick = function() {
     document.getElementById('searchInput').value = '';
-    
     pieChart.data.datasets[0].data = [0, 0, 0];
     pieChart.update();
-   
     document.getElementById('tweetSamples').innerHTML = '';
 };
 
 document.querySelector('.btn-success').onclick = function() {
-  
     let rows = [["Sentiment", "Tweet"]];
     document.querySelectorAll('#tweetSamples .tweet-sample').forEach(div => {
         const sentiment = div.querySelector('.sentiment-badge').innerText;
