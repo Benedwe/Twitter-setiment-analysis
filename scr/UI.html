@@ -49,7 +49,7 @@
             </div>
         </div>
     </div>
-    <!-- Sample Tweets -->
+    
     <div class="card mt-4">
         <div class="card-header">🔄 Sample Tweets</div>
         <div class="card-body" id="tweetSamples">
@@ -58,75 +58,68 @@
             <div class="tweet-sample"><span class="sentiment-badge negative">😡 Negative</span> "Worst experience ever."</div>
         </div>
     </div>
-    <!-- Action Buttons -->
+  
     <div class="mt-3 d-flex justify-content-end gap-2">
         <button class="btn btn-success">Download Report</button>
         <button class="btn btn-secondary">Reset</button>
     </div>
 </div>
-<!-- Chart.js Example Data -->
-<script>
-    // Pie Chart Example
-    const pieCtx = document.getElementById('pieChart').getContext('2d');
-    const pieChart = new Chart(pieCtx, {
-        type: 'pie',
-        data: {
-            labels: ['Positive', 'Neutral', 'Negative'],
-            datasets: [{
-                data: [60, 25, 15],
-                backgroundColor: ['#198754', '#ffc107', '#dc3545']
-            }]
-        },
-        options: {
-            plugins: { legend: { display: true, position: 'bottom' } }
-        }
-    });
 
-    // Line Chart Example
-    const lineCtx = document.getElementById('lineChart').getContext('2d');
-    const lineChart = new Chart(lineCtx, {
-        type: 'line',
-        data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-            datasets: [
-                {
-                    label: 'Positive',
-                    data: [12, 19, 14, 17, 20],
-                    borderColor: '#198754',
-                    backgroundColor: 'rgba(25,135,84,0.1)',
-                    fill: true
-                },
-                {
-                    label: 'Neutral',
-                    data: [7, 8, 6, 9, 7],
-                    borderColor: '#ffc107',
-                    backgroundColor: 'rgba(255,193,7,0.1)',
-                    fill: true
-                },
-                {
-                    label: 'Negative',
-                    data: [3, 2, 5, 4, 3],
-                    borderColor: '#dc3545',
-                    backgroundColor: 'rgba(220,53,69,0.1)',
-                    fill: true
-                }
-            ]
-        },
-        options: {
-            plugins: { legend: { display: true, position: 'bottom' } },
-            scales: { y: { beginAtZero: true } }
-        }
-    });
-</script>
 <script>
+const pieChart = new Chart(document.getElementById('pieChart').getContext('2d'), {
+    type: 'pie',
+    data: {
+        labels: ['Positive', 'Neutral', 'Negative'],
+        datasets: [{
+            data: [60, 25, 15],
+            backgroundColor: ['#198754', '#ffc107', '#dc3545']
+        }]
+    },
+    options: {
+        plugins: { legend: { display: true, position: 'bottom' } }
+    }
+});
+
+const lineChart = new Chart(document.getElementById('lineChart').getContext('2d'), {
+    type: 'line',
+    data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+        datasets: [
+            {
+                label: 'Positive',
+                data: [12, 19, 14, 17, 20],
+                borderColor: '#198754',
+                backgroundColor: 'rgba(25,135,84,0.1)',
+                fill: true
+            },
+            {
+                label: 'Neutral',
+                data: [7, 8, 6, 9, 7],
+                borderColor: '#ffc107',
+                backgroundColor: 'rgba(255,193,7,0.1)',
+                fill: true
+            },
+            {
+                label: 'Negative',
+                data: [3, 2, 5, 4, 3],
+                borderColor: '#dc3545',
+                backgroundColor: 'rgba(220,53,69,0.1)',
+                fill: true
+            }
+        ]
+    },
+    options: {
+        plugins: { legend: { display: true, position: 'bottom' } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
 document.getElementById('analyzeBtn').onclick = async function() {
     const input = document.getElementById('searchInput').value;
     if (!input) {
         alert("Please enter a keyword, hashtag, or tweet.");
         return;
     }
-    // Show loading or disable button if you want
-
     const response = await fetch('/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -137,8 +130,46 @@ document.getElementById('analyzeBtn').onclick = async function() {
         alert(result.error);
         return;
     }
-    // Show result (for demo, alert; you can update the UI as needed)
+    let idx = {positive: 0, neutral: 1, negative: 2}[result.sentiment];
+    pieChart.data.datasets[0].data[idx]++;
+    pieChart.update();
+
+   
+    const badge = {
+        positive: '<span class="sentiment-badge positive">😀 Positive</span>',
+        neutral: '<span class="sentiment-badge neutral">😐 Neutral</span>',
+        negative: '<span class="sentiment-badge negative">😡 Negative</span>'
+    }[result.sentiment];
+    document.getElementById('tweetSamples').innerHTML =
+        `<div class="tweet-sample">${badge} "${input}"</div>` +
+        document.getElementById('tweetSamples').innerHTML;
+
     alert("Sentiment: " + result.sentiment + "\nPolarity: " + result.polarity);
+};
+
+document.querySelector('.btn-secondary').onclick = function() {
+    document.getElementById('searchInput').value = '';
+    
+    pieChart.data.datasets[0].data = [0, 0, 0];
+    pieChart.update();
+   
+    document.getElementById('tweetSamples').innerHTML = '';
+};
+
+document.querySelector('.btn-success').onclick = function() {
+  
+    let rows = [["Sentiment", "Tweet"]];
+    document.querySelectorAll('#tweetSamples .tweet-sample').forEach(div => {
+        const sentiment = div.querySelector('.sentiment-badge').innerText;
+        const tweet = div.innerText.replace(sentiment, '').trim();
+        rows.push([sentiment, tweet]);
+    });
+    let csv = rows.map(r => r.join(",")).join("\n");
+    let blob = new Blob([csv], {type: 'text/csv'});
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = "sentiment_report.csv";
+    a.click();
 };
 </script>
 </body>

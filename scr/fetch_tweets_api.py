@@ -2,10 +2,10 @@ import tweepy
 import pandas as pd
 from textblob import TextBlob
 
-API_KEY = "ScHSyI6aBQUA0l3Viyr7ZuErX"
-API_SECRET = "4htKpyR04caGfJWTkFxccb9PrT9xsqNJX0UB12b0FM7aX3zAcy"
-ACCESS_TOKEN = "1802977742222245888-uGGSNV0sDfazDE3NejaRzqgs3S2d7z"
-ACCESS_TOKEN_SECRET = "FJbhoexHZFNmaMiPn0l5I6LnfmeDmVuez8MwDeGnqbdr4"
+API_KEY = ""
+API_SECRET = ""
+ACCESS_TOKEN = ""
+ACCESS_TOKEN_SECRET = ""
 
 def analyze_sentiment(text):
     analysis = TextBlob(text)
