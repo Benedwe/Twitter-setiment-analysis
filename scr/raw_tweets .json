@@ -48,5 +48,5 @@
   {"tweet_id":47,"username":"ursula","text":"I lost my drafts after the update.","sentiment":"negative"},
   {"tweet_id":48,"username":"vin","text":"The app is very intuitive.","sentiment":"positive"},
   {"tweet_id":49,"username":"wanda","text":"I get too many DMs.","sentiment":"negative"},
-    {"tweet_id":50,"username":"xavier","text":"I like Twitter for quick updates.","sentiment":"positive"}
-  ]
+  {"tweet_id":50,"username":"xavier","text":"I like Twitter for quick updates.","sentiment":"positive"}
+]

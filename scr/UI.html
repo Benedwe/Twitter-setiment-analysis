@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <title>Twitter Sentiment Analysis Tool</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { background: #f8f9fa; }
@@ -21,7 +19,6 @@
 <body>
 <div class="container py-4">
     <h2 class="mb-4 text-center">Twitter Sentiment Analysis Tool</h2>
-   
     <div class="row mb-4">
         <div class="col-md-9 mb-2">
             <input type="text" class="form-control" id="searchInput" placeholder="🔍 Enter keyword, hashtag, or tweet here...">
@@ -30,7 +27,6 @@
             <button class="btn btn-primary" id="analyzeBtn">Analyze</button>
         </div>
     </div>
-    
     <div class="row">
         <div class="col-md-4">
             <div class="card text-center">
@@ -49,22 +45,16 @@
             </div>
         </div>
     </div>
-    
     <div class="card mt-4">
         <div class="card-header">🔄 Sample Tweets</div>
         <div class="card-body" id="tweetSamples">
-            <div class="tweet-sample"><span class="sentiment-badge positive">😀 Positive</span> "I love this product!"</div>
-            <div class="tweet-sample"><span class="sentiment-badge neutral">😐 Neutral</span> "It's okay, not bad."</div>
-            <div class="tweet-sample"><span class="sentiment-badge negative">😡 Negative</span> "Worst experience ever."</div>
         </div>
     </div>
-  
     <div class="mt-3 d-flex justify-content-end gap-2">
-        <button class="btn btn-success">Download Report</button>
-        <button class="btn btn-secondary">Reset</button>
+        <button class="btn btn-success" id="downloadBtn">Download Report</button>
+        <button class="btn btn-secondary" id="resetBtn">Reset</button>
     </div>
 </div>
-
 <script>
 const pieChart = new Chart(document.getElementById('pieChart').getContext('2d'), {
     type: 'pie',
@@ -79,22 +69,48 @@ const pieChart = new Chart(document.getElementById('pieChart').getContext('2d'),
         plugins: { legend: { display: true, position: 'bottom' } }
     }
 });
-
+const lineChart = new Chart(document.getElementById('lineChart').getContext('2d'), {
+    type: 'line',
+    data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+        datasets: [
+            {
+                label: 'Positive',
+                data: [0, 0, 0, 0, 0],
+                borderColor: '#198754',
+                backgroundColor: 'rgba(25,135,84,0.1)',
+                fill: true
+            },
+            {
+                label: 'Neutral',
+                data: [0, 0, 0, 0, 0],
+                borderColor: '#ffc107',
+                backgroundColor: 'rgba(255,193,7,0.1)',
+                fill: true
+            },
+            {
+                label: 'Negative',
+                data: [0, 0, 0, 0, 0],
+                borderColor: '#dc3545',
+                backgroundColor: 'rgba(220,53,69,0.1)',
+                fill: true
+            }
+        ]
+    },
+    options: {
+        plugins: { legend: { display: true, position: 'bottom' } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
 let tweetsData = [];
-
-// Load tweets from local JSON file
+// Load tweets and show all by default
 fetch('raw_tweets.json')
     .then(response => response.json())
-    .then(data => { tweetsData = data; });
-
-document.getElementById('analyzeBtn').onclick = function() {
-    const input = document.getElementById('searchInput').value.trim().toLowerCase();
-    // If input is empty, show all tweets
-    const filtered = input
-        ? tweetsData.filter(t => t.text.toLowerCase().includes(input))
-        : tweetsData;
-
-    // Count sentiments
+    .then(data => {
+        tweetsData = data;
+        showTweets(tweetsData);
+    });
+function showTweets(filtered) {
     let counts = {positive: 0, neutral: 0, negative: 0};
     let samplesHtml = '';
     filtered.forEach(t => {
@@ -104,33 +120,33 @@ document.getElementById('analyzeBtn').onclick = function() {
             neutral: '<span class="sentiment-badge neutral">😐 Neutral</span>',
             negative: '<span class="sentiment-badge negative">😡 Negative</span>'
         }[t.sentiment];
-        samplesHtml += `<div class="tweet-sample">${badge} "${t.text}"</div>`;
+        samplesHtml += `<div class="tweet-sample">${badge} "${t.text}" <span class='text-muted' style='font-size:0.9em;'>(Analyzed)</span></div>`;
     });
-
-    // Update pie chart
     pieChart.data.datasets[0].data = [
         counts.positive,
         counts.neutral,
         counts.negative
     ];
     pieChart.update();
-
-    // Show sample tweets
-    document.getElementById('tweetSamples').innerHTML = samplesHtml || "<div>No tweets found.</div>";
+    document.getElementById('tweetSamples').innerHTML = samplesHtml;
+}
+document.getElementById('analyzeBtn').onclick = function() {
+    const input = document.getElementById('searchInput').value.trim().toLowerCase();
+    let filtered = tweetsData;
+    if (input) {
+        filtered = tweetsData.filter(t => t.text && t.text.toLowerCase().includes(input));
+    }
+    showTweets(filtered);
 };
-
-document.querySelector('.btn-secondary').onclick = function() {
+document.getElementById('resetBtn').onclick = function() {
     document.getElementById('searchInput').value = '';
-    pieChart.data.datasets[0].data = [0, 0, 0];
-    pieChart.update();
-    document.getElementById('tweetSamples').innerHTML = '';
+    showTweets(tweetsData);
 };
-
-document.querySelector('.btn-success').onclick = function() {
+document.getElementById('downloadBtn').onclick = function() {
     let rows = [["Sentiment", "Tweet"]];
     document.querySelectorAll('#tweetSamples .tweet-sample').forEach(div => {
         const sentiment = div.querySelector('.sentiment-badge').innerText;
-        const tweet = div.innerText.replace(sentiment, '').trim();
+        const tweet = div.innerText.replace(sentiment, '').replace('(Analyzed)', '').trim();
         rows.push([sentiment, tweet]);
     });
     let csv = rows.map(r => r.join(",")).join("\n");
