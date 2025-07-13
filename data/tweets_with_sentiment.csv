@@ -1,6 +1,201 @@
-tweet_id,username,text,sentiment,predicted_sentiment
-1,alice,I love the new features on Twitter!,positive,positive
-2,bob,This update is terrible. #disappointed,negative,negative
-3,charlie,Not sure how I feel about the new design.,neutral,negative
-4,dana,Twitter is my favorite app!,positive,positive
-5,ed,Why do they keep changing things?,negative,neutral
+text,sentiment,username,tweet_id,predicted_sentiment
+Broken the notifications! it's constantly crashing! #Tech,negative,quinn,68,negative
+Awful the platform! it's the worst decision ever!,negative,finley,84,negative
+I hate the dark mode! it's a complete disaster!,negative,victor,74,negative
+Brilliant the verification! can't get enough of it!,positive,val,33,positive
+Fantastic the app! it's so user-friendly! #SocialMedia @yuki,positive,june,35,positive
+Worst social media ever! it's so confusing!,negative,xander,69,negative
+Fantastic the API! it's so well designed!,positive,paul,16,positive
+Useless the mobile app! it's driving me crazy! #Tech,negative,june,75,negative
+Amazing the mobile app! it's exceeded my expectations! @zara,positive,ivy,31,positive
+I don't have strong feelings about the trending topics. not too bad,neutral,bob,157,negative
+I don't have strong feelings about the security. not amazing but not terrible,neutral,noah,144,positive
+Excellent the retweets! it's so reliable! @alice,positive,bob,9,positive
+I love the platform! it's incredibly useful!,positive,fred,11,positive
+Worst the algorithm ever! it's so slow! #Twitter @ivy,negative,charlie,77,negative
+Best Twitter ever! it's made everything better!,positive,zara,21,positive
+I guess the spaces is it is what it is #Update,neutral,nick,199,neutral
+Not sure about the security. tolerable,neutral,winter,174,negative
+Fantastic the likes! it's so user-friendly!,positive,fred,61,positive
+I'm indifferent to the platform. it's fine,neutral,rose,192,positive
+"Not bad, not great - the dark mode is it's fine @dan",neutral,iris,149,positive
+Useless the web version! it's completely broken!,negative,paul,83,negative
+I guess the spaces is not amazing but not terrible #Twitter,neutral,finley,196,positive
+I hate the privacy settings! it's making me angry!,negative,casey,116,negative
+Annoying the dark mode! it's so slow!,negative,ella,71,negative
+I don't have strong feelings about the community. passable @paul,neutral,nick,188,positive
+Maybe the new update is not amazing but not terrible,neutral,will,155,positive
+Disappointing Twitter! it's making me angry! @hunter,negative,alex,90,negative
+Amazing the spaces! it's incredibly useful!,positive,taylor,19,positive
+Disappointing the features! it's a complete disaster! @casey,negative,vin,95,negative
+Excellent the replies! it's changed my life! #Update,positive,unisex,24,positive
+So happy with the platform! it's absolutely fantastic!,positive,otto,26,positive
+Excellent the dark mode! it's incredibly fast!,positive,rachel,30,positive
+Useless the hashtags! it's completely broken!,negative,emery,99,negative
+Amazing the privacy settings! can't get enough of it! @ursula,positive,gina,56,positive
+I guess the new update is it is what it is #Update,neutral,liam,133,positive
+Frustrating Twitter! it's so buggy!,negative,kate,108,negative
+Outstanding the mobile app! it's so user-friendly!,positive,dan,39,positive
+Best the verification ever! it's so reliable!,positive,rachel,52,positive
+I guess Twitter is not great but not awful,neutral,nick,181,positive
+Maybe the interface is average at best #Update,neutral,bob,138,positive
+I'm indifferent to the verification. gets the work done,neutral,ed,147,neutral
+Useless the dark mode! it's so slow! @oliver,negative,liam,128,negative
+Best the replies ever! it's incredibly useful! @sage,positive,sam,34,positive
+Mixed feelings about the security. meh,neutral,rachel,146,neutral
+I hate the replies! it's so buggy! @gray,negative,yuki,89,negative
+I'm indifferent to the timeline. gets the work done,neutral,claire,178,neutral
+I don't have strong feelings about the API. average at best,neutral,liam,139,positive
+Amazing the lists! it's so well designed!,positive,gina,8,positive
+I love the replies! it's so well designed! #Update,positive,fred,2,positive
+Maybe the new update is mediocre #App @oliver,neutral,nina,159,negative
+I guess the API is gets the work done,neutral,zen,176,neutral
+Amazing the web version! can't get enough of it!,positive,liam,65,positive
+Wonderful the mobile app! it's exactly what I needed!,positive,karl,60,positive
+Ridiculous the timeline! it's a waste of time!,negative,alex,126,negative
+Frustrating the interface! it's driving me crazy! @alice,negative,ed,88,negative
+Excellent the web version! it's exceeded my expectations!,positive,casey,48,positive
+Useless the features! it's unusable!,negative,taylor,117,negative
+I hate the replies! it's so confusing!,negative,gray,76,negative
+Awful the likes! it's so buggy!,negative,nick,120,negative
+I'm indifferent to the privacy settings. alright I suppose #SocialMedia,neutral,zara,143,neutral
+Worst the algorithm ever! it's making me angry!,negative,liam,121,negative
+"It's okay, the likes is meh #Twitter @tina",neutral,ursula,187,positive
+Not sure about the features. it's fine #App,neutral,yara,134,positive
+Outstanding the verification! it's changed my life!,positive,pam,59,positive
+Not sure about Twitter. mediocre,neutral,yara,162,negative
+Maybe the retweets is alright I suppose #Update,neutral,quinn,141,neutral
+I suppose the design is acceptable #Tech,neutral,kate,177,neutral
+Worst the spaces ever! it's a total mess!,negative,matt,130,negative
+Ridiculous the timeline! it's so unreliable!,negative,indigo,94,negative
+Frustrating the verification! it's a total mess!,negative,noah,109,negative
+I hate the design! it's a total mess! @zane,negative,lisa,82,negative
+Worst social media ever! it's making me angry!,negative,yara,124,negative
+I don't have strong feelings about the lists. alright I suppose,neutral,quinn,154,positive
+Useless the lists! it's so slow!,negative,blake,87,negative
+Disappointing the verification! it's so unreliable!,negative,ivy,81,negative
+Useless the replies! it's the worst decision ever! #Update @sage,negative,tina,85,negative
+I suppose the web version is not great but not awful,neutral,morgan,148,positive
+Amazing the replies! it's exactly what I needed! #SocialMedia,positive,mona,40,positive
+I don't have strong feelings about the API. it is what it is #App,neutral,will,156,positive
+I'm indifferent to the community. not great but not awful,neutral,zane,169,positive
+I think the blue checkmark is passable #Update,neutral,ella,189,neutral
+I don't have strong feelings about the timeline. gets the work done,neutral,kendall,175,positive
+Brilliant the security! it's absolutely fantastic! @xena,positive,nick,5,positive
+Disappointing the security! it's so confusing!,negative,rachel,125,negative
+Brilliant the platform! it's exactly what I needed! #Tech @zara,positive,finley,51,positive
+Best the spaces ever! it's pure genius! #Update,positive,indigo,3,positive
+I'm indifferent to the interface. mediocre,neutral,emery,194,negative
+Excellent the likes! it's so well designed!,positive,ursula,44,positive
+"Not bad, not great - the platform is average at best #Update",neutral,yara,163,positive
+Incredible the interface! it's pure genius!,positive,noah,18,positive
+I don't have strong feelings about the dark mode. not too bad,neutral,frank,152,negative
+I hate the lists! it's a complete disaster! #Twitter,negative,zen,96,negative
+Amazing the lists! it's incredibly fast!,positive,steve,50,positive
+Useless the algorithm! it's a total mess! #Twitter,negative,gray,107,negative
+Amazing the trending topics! it's made everything better!,positive,quinn,37,positive
+I hate the community! it's a total mess! @harry,negative,liam,86,negative
+Worst social media ever! it's so confusing!,negative,yuki,132,negative
+Incredible the timeline! it's made everything better! #App,positive,ben,12,positive
+Frustrating the replies! it's so unreliable! @dan,negative,gina,122,negative
+Ridiculous social media! it's so slow! @gina,negative,tara,92,negative
+I don't have strong feelings about the algorithm. could be worse,neutral,rachel,172,positive
+I hate the trending topics! it's so unreliable!,negative,frank,113,negative
+Best the interface ever! it's exceeded my expectations!,positive,parker,45,positive
+Incredible the community! it's changed my life! @zane,positive,amy,1,positive
+I hate the app! it's completely useless!,negative,quincy,72,negative
+Incredible the verification! it's absolutely fantastic!,positive,zara,63,positive
+I guess the search is passable #Tech,neutral,vin,190,neutral
+Ridiculous the community! it's a complete disaster! @ivy,negative,gina,118,negative
+Outstanding the replies! it's exceeded my expectations!,positive,yara,54,positive
+I'm indifferent to the privacy settings. it's fine,neutral,otto,185,positive
+I suppose the web version is tolerable,neutral,lisa,167,neutral
+Ridiculous the security! it's making me angry!,negative,dan,115,negative
+Broken the design! it's completely useless! @drew,negative,xavier,131,negative
+Frustrating the DMs! it's so unreliable! @harry,negative,claire,93,negative
+"Not bad, not great - the trending topics is acceptable",neutral,alex,186,negative
+Terrible the spaces! it's so confusing! #Update,negative,claire,91,negative
+I don't have strong feelings about the verification. not too bad,neutral,nina,165,negative
+Outstanding social media! it's incredibly useful! @hunter,positive,karl,15,positive
+Annoying the mobile app! it's completely useless!,negative,vin,114,negative
+I suppose social media is does the job,neutral,lisa,171,positive
+Not sure about the new update. not great but not awful @ursula,neutral,gina,158,negative
+Worst the blue checkmark ever! it's completely broken! #Twitter,negative,rachel,79,negative
+Maybe the hashtags is mediocre,neutral,sam,153,negative
+Annoying Twitter! it's constantly crashing! #Twitter,negative,zara,123,negative
+Disappointing the security! it's unusable! @victor,negative,tina,102,negative
+Mixed feelings about the blue checkmark. tolerable @olivia,neutral,frank,140,neutral
+I think the notifications is could be worse,neutral,yuki,191,negative
+I guess social media is not great but not awful #App,neutral,sage,151,positive
+Disappointing the verification! it's a total mess! #App,negative,bob,127,negative
+Not sure about the lists. meh,neutral,gray,164,negative
+I think the replies is not amazing but not terrible #Twitter @taylor,neutral,morgan,170,positive
+Fantastic the timeline! can't get enough of it! #Tech,positive,amy,43,positive
+Not sure about the community. not too bad #Update,neutral,uma,173,negative
+Excellent the blue checkmark! it's the best thing ever!,positive,blake,66,positive
+Best the DMs ever! it's the best thing ever!,positive,dan,38,positive
+Ridiculous the search! it's constantly crashing!,negative,sage,103,negative
+I don't have strong feelings about the algorithm. meh,neutral,kendall,137,positive
+Awful the algorithm! it's so slow!,negative,yves,111,negative
+I think the API is passable,neutral,rose,179,neutral
+Amazing the likes! it's exceeded my expectations!,positive,ed,14,positive
+Frustrating the dark mode! it's so buggy!,negative,victor,70,negative
+Outstanding the mobile app! it's the best thing ever!,positive,dan,27,positive
+Best the DMs ever! it's exactly what I needed!,positive,rachel,58,positive
+I suppose the likes is it's fine @zara,neutral,ed,160,positive
+Maybe the community is mediocre #Update,neutral,casey,182,negative
+Fantastic the replies! it's revolutionary! #App,positive,steve,29,positive
+Wonderful the API! it's absolutely fantastic! #App,positive,iris,13,positive
+I guess the trending topics is tolerable #Tech,neutral,emery,145,neutral
+Excellent the algorithm! it's absolutely fantastic! #Update,positive,zara,36,positive
+Not sure about the privacy settings. average at best #Tech,neutral,xavier,166,positive
+So happy with the dark mode! it's changed my life!,positive,alex,23,positive
+Incredible the algorithm! it's so user-friendly! #Tech,positive,zane,53,positive
+"It's okay, the hashtags is tolerable",neutral,pam,200,positive
+Worst the timeline ever! it's completely useless! @val,negative,tina,112,negative
+"Not bad, not great - the community is could be worse #SocialMedia",neutral,olivia,183,negative
+Brilliant the interface! it's incredibly useful! @jack,positive,frank,22,positive
+I don't have strong feelings about the blue checkmark. not amazing but not terrible,neutral,will,195,positive
+Amazing the replies! it's revolutionary! @gray,positive,emery,47,positive
+Useless the algorithm! it's so slow!,negative,alice,105,negative
+Broken the spaces! it's a complete disaster!,negative,rose,80,negative
+Excellent the lists! it's the best thing ever! #Twitter,positive,quinn,28,positive
+Wonderful Twitter! can't get enough of it!,positive,indigo,25,positive
+Incredible the verification! it's made everything better! @henry,positive,steve,10,positive
+"Not bad, not great - the app is alright I suppose",neutral,zara,150,negative
+Brilliant the web version! it's the best thing ever!,positive,kendall,57,positive
+I suppose the mobile app is passable #Update,neutral,zen,168,neutral
+I guess the interface is does the job #Tech,neutral,alice,198,neutral
+Ridiculous the DMs! it's so confusing!,negative,drew,129,negative
+I love the algorithm! it's so well designed! #Update,positive,frank,55,positive
+"Not bad, not great - the features is passable @wanda",neutral,yves,142,negative
+Ridiculous the privacy settings! it's completely useless!,negative,blake,73,negative
+Frustrating the retweets! it's constantly crashing! #SocialMedia @charlie,negative,jack,98,negative
+Outstanding the security! it's incredibly useful! #SocialMedia,positive,lisa,17,positive
+Wonderful the privacy settings! it's the best thing ever! #App @ben,positive,grace,32,positive
+Amazing the algorithm! it's changed my life! #Tech,positive,karl,7,positive
+Mixed feelings about the notifications. does the job,neutral,oliver,193,neutral
+Awful the retweets! it's driving me crazy!,negative,vin,119,negative
+I hate the retweets! it's so unreliable! @grace,negative,sam,97,negative
+I love the security! it's the best thing ever!,positive,gray,42,positive
+Fantastic the verification! it's the best thing ever! @noah,positive,ivy,20,positive
+I think the lists is alright I suppose,neutral,yves,161,neutral
+Outstanding the community! it's revolutionary!,positive,xena,62,positive
+Best the mobile app ever! it's so reliable!,positive,hunter,6,positive
+I suppose the retweets is tolerable,neutral,bob,184,neutral
+I think the hashtags is passable,neutral,yara,135,neutral
+Amazing the security! it's absolutely fantastic!,positive,val,41,positive
+Awful the platform! it's the worst decision ever!,negative,gray,67,negative
+Useless the likes! it's completely broken!,negative,taylor,110,negative
+Amazing the security! it's so well designed!,positive,will,46,positive
+Fantastic the app! it's pure genius!,positive,gray,49,positive
+I'm indifferent to the retweets. gets the work done #Update @ivy,neutral,mona,197,neutral
+Useless the interface! it's so frustrating! #App,negative,steve,101,negative
+Useless the notifications! it's completely useless! #Twitter,negative,olivia,100,negative
+Fantastic social media! it's so user-friendly! #Update @xena,positive,riley,64,positive
+Disappointing the lists! it's unusable!,negative,xavier,78,negative
+Mixed feelings about the blue checkmark. mediocre,neutral,indigo,180,negative
+I don't have strong feelings about the blue checkmark. not too bad,neutral,matt,136,negative
+Best the features ever! it's so intuitive!,positive,vin,4,positive
+Ridiculous the lists! it's unusable! #App,negative,kate,106,negative
+Annoying the likes! it's making me angry!,negative,june,104,negative

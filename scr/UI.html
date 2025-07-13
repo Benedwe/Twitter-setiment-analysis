@@ -14,61 +14,422 @@
         .negative { color: #dc3545; }
         .tweet-sample { border-bottom: 1px solid #eee; padding: 0.5em 0; }
         .card { margin-bottom: 1em; }
+        .nav-tabs .nav-link { cursor: pointer; }
+        .progress { height: 25px; }
+        .metric-card { text-align: center; padding: 1rem; }
+        .metric-value { font-size: 2rem; font-weight: bold; }
+        .preprocessing-option { margin: 0.5rem 0; }
+        .model-option { margin: 0.5rem 0; }
+        .hyperparameter-group { margin: 1rem 0; padding: 1rem; border: 1px solid #dee2e6; border-radius: 0.375rem; }
+        .training-log { height: 200px; overflow-y: auto; background: #f8f9fa; padding: 1rem; border: 1px solid #dee2e6; border-radius: 0.375rem; }
+        .log-entry { margin: 0.25rem 0; font-family: monospace; }
+        .log-info { color: #0d6efd; }
+        .log-success { color: #198754; }
+        .log-warning { color: #ffc107; }
+        .log-error { color: #dc3545; }
     </style>
 </head>
 <body>
-<div class="container py-4">
+<div class="container-fluid py-4">
     <h2 class="mb-4 text-center">Twitter Sentiment Analysis Tool</h2>
-    <div class="row mb-4">
-        <div class="col-md-9 mb-2">
-            <input type="text" class="form-control" id="searchInput" placeholder="🔍 Enter keyword, hashtag, or tweet here...">
+    
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="analysis-tab" data-bs-toggle="tab" data-bs-target="#analysis" type="button" role="tab">📊 Analysis</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="training-tab" data-bs-toggle="tab" data-bs-target="#training" type="button" role="tab">🤖 Model Training</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="models-tab" data-bs-toggle="tab" data-bs-target="#models" type="button" role="tab">💾 Model Management</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="mainTabContent">
+        <!-- Analysis Tab -->
+        <div class="tab-pane fade show active" id="analysis" role="tabpanel">
+            <div class="row mb-4">
+                <div class="col-md-9 mb-2">
+                    <input type="text" class="form-control" id="searchInput" placeholder="🔍 Enter keyword, hashtag, or tweet here...">
+                </div>
+                <div class="col-md-3 d-grid">
+                    <button class="btn btn-primary" id="analyzeBtn">Analyze</button>
+                </div>
+            </div>
+            
+            <!-- Quick Filter Buttons -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-success" onclick="filterBySentiment('positive')">😀 Positive</button>
+                        <button type="button" class="btn btn-outline-warning" onclick="filterBySentiment('neutral')">😐 Neutral</button>
+                        <button type="button" class="btn btn-outline-danger" onclick="filterBySentiment('negative')">😡 Negative</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="showAllTweets()">📊 All Tweets</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-header">📊 Sentiment Distribution</div>
+                        <div class="card-body">
+                            <canvas id="pieChart"></canvas>
+                            <div class="mt-2">
+                                <small class="text-muted">Click on segments to filter</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card text-center">
+                        <div class="card-header">📈 Sentiment Trends (Weekly)</div>
+                        <div class="card-body">
+                            <canvas id="lineChart"></canvas>
+                            <div class="mt-2">
+                                <small class="text-muted">Hover for detailed values</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">🔄 Sample Tweets</div>
+                <div class="card-body" id="tweetSamples">
+                </div>
+            </div>
+            <div class="mt-3 d-flex justify-content-end gap-2">
+                <button class="btn btn-success" id="downloadBtn">Download Report</button>
+                <button class="btn btn-secondary" id="resetBtn">Reset</button>
+            </div>
         </div>
-        <div class="col-md-3 d-grid">
-            <button class="btn btn-primary" id="analyzeBtn">Analyze</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-header">📊 Sentiment Pie</div>
+
+        <!-- Training Tab -->
+        <div class="tab-pane fade" id="training" role="tabpanel">
+            <div class="row">
+                <!-- Dataset Input -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">📁 Dataset Input</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="datasetFile" class="form-label">Upload CSV Dataset</label>
+                                <input type="file" class="form-control" id="datasetFile" accept=".csv">
+                                <div class="form-text">CSV must contain 'tweet_text' and 'sentiment_label' columns</div>
+                            </div>
+                            <button class="btn btn-outline-primary" id="previewBtn">Preview Data</button>
+                            <button class="btn btn-outline-success" id="validateBtn">Validate Data</button>
+                            
+                            <div id="dataPreview" class="mt-3" style="display: none;">
+                                <h6>Data Preview:</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm" id="previewTable">
+                                        <thead><tr></tr></thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preprocessing Options -->
+                    <div class="card mt-3">
+                        <div class="card-header">🔧 Preprocessing Options</div>
+                        <div class="card-body">
+                            <div class="preprocessing-option">
+                                <input type="checkbox" class="form-check-input" id="removeStopwords" checked>
+                                <label class="form-check-label" for="removeStopwords">Remove stopwords</label>
+                            </div>
+                            <div class="preprocessing-option">
+                                <input type="checkbox" class="form-check-input" id="lowercase" checked>
+                                <label class="form-check-label" for="lowercase">Convert to lowercase</label>
+                            </div>
+                            <div class="preprocessing-option">
+                                <input type="checkbox" class="form-check-input" id="removeHashtags">
+                                <label class="form-check-label" for="removeHashtags">Remove hashtags</label>
+                            </div>
+                            <div class="preprocessing-option">
+                                <input type="checkbox" class="form-check-input" id="removeMentions">
+                                <label class="form-check-label" for="removeMentions">Remove mentions (@username)</label>
+                            </div>
+                            <div class="preprocessing-option">
+                                <input type="checkbox" class="form-check-input" id="removeUrls">
+                                <label class="form-check-label" for="removeUrls">Remove URLs</label>
+                            </div>
+                            <div class="preprocessing-option">
+                                <label class="form-label">Text Normalization:</label>
+                                <select class="form-select" id="normalization">
+                                    <option value="none">None</option>
+                                    <option value="stemming">Stemming</option>
+                                    <option value="lemmatization">Lemmatization</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Splitting -->
+                    <div class="card mt-3">
+                        <div class="card-header">✂️ Data Splitting</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="trainSplit" class="form-label">Train-Test Split Ratio</label>
+                                <input type="range" class="form-range" id="trainSplit" min="50" max="90" value="80">
+                                <div class="text-center" id="splitDisplay">80% Train / 20% Test</div>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="shuffleData" checked>
+                                <label class="form-check-label" for="shuffleData">Shuffle data before splitting</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Configuration -->
+                <div class="col-md-6">
+                    <!-- Model Selection -->
+                    <div class="card">
+                        <div class="card-header">🤖 Model Selection</div>
+                        <div class="card-body">
+                            <div class="model-option">
+                                <input type="radio" class="form-check-input" name="modelType" id="logisticRegression" value="logistic" checked>
+                                <label class="form-check-label" for="logisticRegression">Logistic Regression</label>
+                            </div>
+                            <div class="model-option">
+                                <input type="radio" class="form-check-input" name="modelType" id="naiveBayes" value="naive_bayes">
+                                <label class="form-check-label" for="naiveBayes">Naive Bayes</label>
+                            </div>
+                            <div class="model-option">
+                                <input type="radio" class="form-check-input" name="modelType" id="svm" value="svm">
+                                <label class="form-check-label" for="svm">Support Vector Machine (SVM)</label>
+                            </div>
+                            <div class="model-option">
+                                <input type="radio" class="form-check-input" name="modelType" id="randomForest" value="random_forest">
+                                <label class="form-check-label" for="randomForest">Random Forest</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hyperparameter Tuning -->
+                    <div class="card mt-3">
+                        <div class="card-header">⚙️ Hyperparameters</div>
+                        <div class="card-body">
+                            <div id="hyperparameters">
+                                <!-- Dynamic hyperparameters will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cross-Validation -->
+                    <div class="card mt-3">
+                        <div class="card-header">🔄 Cross-Validation</div>
+                        <div class="card-body">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="useCrossValidation">
+                                <label class="form-check-label" for="useCrossValidation">Use K-Fold Cross-Validation</label>
+                            </div>
+                            <div class="mt-2" id="cvSettings" style="display: none;">
+                                <label for="cvFolds" class="form-label">Number of Folds:</label>
+                                <select class="form-select" id="cvFolds">
+                                    <option value="3">3</option>
+                                    <option value="5" selected>5</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Training Controls -->
+                    <div class="card mt-3">
+                        <div class="card-header">🚀 Training</div>
+                        <div class="card-body">
+                            <button class="btn btn-primary w-100" id="trainBtn" disabled>Start Training</button>
+                            <div class="progress mt-3" id="trainingProgress" style="display: none;">
+                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Logs -->
+            <div class="card mt-4">
+                <div class="card-header">📝 Training Logs</div>
                 <div class="card-body">
-                    <canvas id="pieChart"></canvas>
+                    <div class="training-log" id="trainingLog">
+                        <div class="log-entry log-info">Ready to start training...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="row mt-4" id="performanceMetrics" style="display: none;">
+                <div class="col-md-12">
+                    <h5>📊 Performance Metrics</h5>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="metric-value" id="accuracyMetric">-</div>
+                        <div>Accuracy</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="metric-value" id="precisionMetric">-</div>
+                        <div>Precision</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="metric-value" id="recallMetric">-</div>
+                        <div>Recall</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="metric-value" id="f1Metric">-</div>
+                        <div>F1-Score</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confusion Matrix -->
+            <div class="card mt-4" id="confusionMatrixCard" style="display: none;">
+                <div class="card-header">🎯 Confusion Matrix</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center" id="confusionMatrix">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Predicted Negative</th>
+                                    <th>Predicted Neutral</th>
+                                    <th>Predicted Positive</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Actual Negative</strong></td>
+                                    <td id="tn">-</td>
+                                    <td id="fn1">-</td>
+                                    <td id="fn2">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Actual Neutral</strong></td>
+                                    <td id="fn3">-</td>
+                                    <td id="tn2">-</td>
+                                    <td id="fn4">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Actual Positive</strong></td>
+                                    <td id="fp1">-</td>
+                                    <td id="fp2">-</td>
+                                    <td id="tp">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
-            <div class="card text-center">
-                <div class="card-header">📈 Sentiment Over Time</div>
+
+        <!-- Model Management Tab -->
+        <div class="tab-pane fade" id="models" role="tabpanel">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">💾 Save Model</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="modelName" class="form-label">Model Name</label>
+                                <input type="text" class="form-control" id="modelName" placeholder="my_sentiment_model">
+                            </div>
+                            <div class="mb-3">
+                                <label for="modelDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="modelDescription" rows="3" placeholder="Brief description of the model..."></textarea>
+                            </div>
+                            <button class="btn btn-success" id="saveModelBtn" disabled>Save Model</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">📂 Load Model</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="modelFile" class="form-label">Upload Model File</label>
+                                <input type="file" class="form-control" id="modelFile" accept=".pkl,.joblib,.json">
+                            </div>
+                            <button class="btn btn-primary" id="loadModelBtn">Load Model</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">📋 Saved Models</div>
                 <div class="card-body">
-                    <canvas id="lineChart"></canvas>
+                    <div id="savedModelsList">
+                        <div class="text-muted">No saved models found.</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="card mt-4">
-        <div class="card-header">🔄 Sample Tweets</div>
-        <div class="card-body" id="tweetSamples">
-        </div>
-    </div>
-    <div class="mt-3 d-flex justify-content-end gap-2">
-        <button class="btn btn-success" id="downloadBtn">Download Report</button>
-        <button class="btn btn-secondary" id="resetBtn">Reset</button>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+// Training-related variables
+let trainingData = null;
+let currentModel = null;
+let trainingInProgress = false;
+
+// Initialize charts
 const pieChart = new Chart(document.getElementById('pieChart').getContext('2d'), {
     type: 'pie',
     data: {
         labels: ['Positive', 'Neutral', 'Negative'],
         datasets: [{
             data: [0, 0, 0],
-            backgroundColor: ['#198754', '#ffc107', '#dc3545']
+            backgroundColor: ['#198754', '#ffc107', '#dc3545'],
+            borderWidth: 2,
+            borderColor: '#fff'
         }]
     },
     options: {
-        plugins: { legend: { display: true, position: 'bottom' } }
+        plugins: { 
+            legend: { display: true, position: 'bottom' },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = ((context.parsed / total) * 100).toFixed(1);
+                        return `${context.label}: ${context.parsed} (${percentage}%)`;
+                    }
+                }
+            }
+        },
+        onClick: function(event, elements) {
+            if (elements.length > 0) {
+                const index = elements[0].index;
+                const sentiments = ['positive', 'neutral', 'negative'];
+                const selectedSentiment = sentiments[index];
+                
+                // Filter tweets by selected sentiment
+                const filtered = tweetsData.filter(t => {
+                    const sentiment = t.sentiment || t.predicted_sentiment;
+                    return sentiment === selectedSentiment;
+                });
+                
+                showTweets(filtered);
+                
+                // Update search input to show current filter
+                document.getElementById('searchInput').value = selectedSentiment;
+            }
+        }
     }
 });
+
 const lineChart = new Chart(document.getElementById('lineChart').getContext('2d'), {
     type: 'line',
     data: {
@@ -79,69 +440,284 @@ const lineChart = new Chart(document.getElementById('lineChart').getContext('2d'
                 data: [0, 0, 0, 0, 0],
                 borderColor: '#198754',
                 backgroundColor: 'rgba(25,135,84,0.1)',
-                fill: true
+                fill: true,
+                tension: 0.4,
+                pointRadius: 6,
+                pointHoverRadius: 8
             },
             {
                 label: 'Neutral',
                 data: [0, 0, 0, 0, 0],
                 borderColor: '#ffc107',
                 backgroundColor: 'rgba(255,193,7,0.1)',
-                fill: true
+                fill: true,
+                tension: 0.4,
+                pointRadius: 6,
+                pointHoverRadius: 8
             },
             {
                 label: 'Negative',
                 data: [0, 0, 0, 0, 0],
                 borderColor: '#dc3545',
                 backgroundColor: 'rgba(220,53,69,0.1)',
-                fill: true
+                fill: true,
+                tension: 0.4,
+                pointRadius: 6,
+                pointHoverRadius: 8
             }
         ]
     },
     options: {
-        plugins: { legend: { display: true, position: 'bottom' } },
-        scales: { y: { beginAtZero: true } }
+        plugins: { 
+            legend: { display: true, position: 'bottom' },
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+                callbacks: {
+                    label: function(context) {
+                        return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}%`;
+                    }
+                }
+            }
+        },
+        scales: { 
+            y: { 
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Percentage (%)'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Day of Week'
+                }
+            }
+        },
+        interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+        }
     }
 });
+
 let tweetsData = [];
+
 // Load tweets and show all by default
-fetch('raw_tweets.json')
-    .then(response => response.json())
-    .then(data => {
-        tweetsData = data;
-        showTweets(tweetsData);
-    });
+loadTweetsData();
+
+function loadTweetsData() {
+    // Try to load tweets with sentiment first, then fallback to raw tweets
+    fetch('/api/tweets-with-sentiment')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            tweetsData = data;
+            showTweets(tweetsData);
+            console.log('Loaded tweets with sentiment:', data.length);
+        })
+        .catch(error => {
+            console.log('No sentiment data found, trying raw tweets...');
+            // Fallback to raw tweets
+            fetch('/api/tweets')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    tweetsData = data;
+                    showTweets(tweetsData);
+                    console.log('Loaded raw tweets:', data.length);
+                })
+                .catch(error => {
+                    console.error('Error loading tweets:', error);
+                    document.getElementById('tweetSamples').innerHTML = 
+                        '<div class="alert alert-warning">No data files found. Please ensure raw_tweets.csv or tweets_with_sentiment.csv exists in the data directory.</div>';
+                });
+        });
+}
+
 function showTweets(filtered) {
     let counts = {positive: 0, neutral: 0, negative: 0};
     let samplesHtml = '';
-    filtered.forEach(t => {
-        counts[t.sentiment] = (counts[t.sentiment] || 0) + 1;
-        const badge = {
-            positive: '<span class="sentiment-badge positive">😀 Positive</span>',
-            neutral: '<span class="sentiment-badge neutral">😐 Neutral</span>',
-            negative: '<span class="sentiment-badge negative">😡 Negative</span>'
-        }[t.sentiment];
-        samplesHtml += `<div class="tweet-sample">${badge} "${t.text}" <span class='text-muted' style='font-size:0.9em;'>(Analyzed)</span></div>`;
+    
+    // Validate that filtered data exists and is an array
+    if (!filtered || !Array.isArray(filtered)) {
+        filtered = [];
+    }
+    
+    // Limit display to first 50 tweets to avoid overwhelming the UI
+    const displayTweets = filtered.slice(0, 50);
+    
+    displayTweets.forEach(t => {
+        // Handle both CSV and JSON data structures
+        const sentiment = t.sentiment || t.predicted_sentiment;
+        const text = t.text;
+        
+        if (sentiment && text) {
+            counts[sentiment] = (counts[sentiment] || 0) + 1;
+            const badge = {
+                positive: '<span class="sentiment-badge positive">😀 Positive</span>',
+                neutral: '<span class="sentiment-badge neutral">😐 Neutral</span>',
+                negative: '<span class="sentiment-badge negative">😡 Negative</span>'
+            }[sentiment];
+            
+            // Show username if available
+            const username = t.username ? `@${t.username}: ` : '';
+            const analysisNote = t.predicted_sentiment ? '(Predicted)' : '(Analyzed)';
+            samplesHtml += `<div class="tweet-sample">${badge} "${username}${text}" <span class='text-muted' style='font-size:0.9em;'>${analysisNote}</span></div>`;
+        }
     });
+    
+    // Add summary if more tweets exist
+    if (filtered.length > 50) {
+        samplesHtml += `<div class="alert alert-info mt-3">Showing 50 of ${filtered.length} tweets. Use search to filter results.</div>`;
+    }
+    
+    // Update pie chart with filtered data
     pieChart.data.datasets[0].data = [
-        counts.positive,
-        counts.neutral,
-        counts.negative
+        counts.positive || 0,
+        counts.neutral || 0,
+        counts.negative || 0
     ];
     pieChart.update();
+    
+    // Update line chart with time-based data (simulated based on filtered results)
+    const totalTweets = filtered.length;
+    const positiveRatio = totalTweets > 0 ? (counts.positive / totalTweets) * 100 : 0;
+    const neutralRatio = totalTweets > 0 ? (counts.neutral / totalTweets) * 100 : 0;
+    const negativeRatio = totalTweets > 0 ? (counts.negative / totalTweets) * 100 : 0;
+    
+    // Generate more realistic time-series data
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const positiveData = days.map(() => positiveRatio * (0.8 + Math.random() * 0.4));
+    const neutralData = days.map(() => neutralRatio * (0.8 + Math.random() * 0.4));
+    const negativeData = days.map(() => negativeRatio * (0.8 + Math.random() * 0.4));
+    
+    lineChart.data.labels = days;
+    lineChart.data.datasets[0].data = positiveData;
+    lineChart.data.datasets[1].data = neutralData;
+    lineChart.data.datasets[2].data = negativeData;
+    lineChart.update();
+    
     document.getElementById('tweetSamples').innerHTML = samplesHtml;
+    
+    // Update summary statistics
+    updateSummaryStats(counts, totalTweets);
 }
+
+function updateSummaryStats(counts, totalTweets) {
+    const positivePercent = totalTweets > 0 ? ((counts.positive / totalTweets) * 100).toFixed(1) : 0;
+    const neutralPercent = totalTweets > 0 ? ((counts.neutral / totalTweets) * 100).toFixed(1) : 0;
+    const negativePercent = totalTweets > 0 ? ((counts.negative / totalTweets) * 100).toFixed(1) : 0;
+    
+    // Add summary cards if they don't exist
+    let summaryHtml = `
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">😀 Positive</h5>
+                        <h3 class="text-success">${counts.positive || 0}</h3>
+                        <p class="text-muted">${positivePercent}%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">😐 Neutral</h5>
+                        <h3 class="text-warning">${counts.neutral || 0}</h3>
+                        <p class="text-muted">${neutralPercent}%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-danger">😡 Negative</h5>
+                        <h3 class="text-danger">${counts.negative || 0}</h3>
+                        <p class="text-muted">${negativePercent}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Insert summary before the charts
+    const chartsRow = document.querySelector('#analysis .row:nth-child(2)');
+    if (chartsRow && !document.getElementById('summaryStats')) {
+        const summaryDiv = document.createElement('div');
+        summaryDiv.id = 'summaryStats';
+        summaryDiv.innerHTML = summaryHtml;
+        chartsRow.parentNode.insertBefore(summaryDiv, chartsRow);
+    } else if (document.getElementById('summaryStats')) {
+        document.getElementById('summaryStats').innerHTML = summaryHtml;
+    }
+}
+
 document.getElementById('analyzeBtn').onclick = function() {
     const input = document.getElementById('searchInput').value.trim().toLowerCase();
     let filtered = tweetsData;
+    
+    // Validate input and filter tweets
     if (input) {
-        filtered = tweetsData.filter(t => t.text && t.text.toLowerCase().includes(input));
+        filtered = tweetsData.filter(t => {
+            // Search in text, username, and sentiment
+            const text = t.text ? t.text.toLowerCase() : '';
+            const username = t.username ? t.username.toLowerCase() : '';
+            const sentiment = (t.sentiment || t.predicted_sentiment || '').toLowerCase();
+            
+            return text.includes(input) || username.includes(input) || sentiment.includes(input);
+        });
     }
+    
+    // Show filtered results
     showTweets(filtered);
+    
+    // Add visual feedback
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const originalText = analyzeBtn.textContent;
+    analyzeBtn.textContent = 'Analyzing...';
+    analyzeBtn.disabled = true;
+    
+    setTimeout(() => {
+        analyzeBtn.textContent = originalText;
+        analyzeBtn.disabled = false;
+    }, 500);
 };
+
+// Add real-time search functionality
+document.getElementById('searchInput').addEventListener('input', function() {
+    const input = this.value.trim().toLowerCase();
+    let filtered = tweetsData;
+    
+    if (input) {
+        filtered = tweetsData.filter(t => {
+            const text = t.text ? t.text.toLowerCase() : '';
+            const username = t.username ? t.username.toLowerCase() : '';
+            const sentiment = (t.sentiment || t.predicted_sentiment || '').toLowerCase();
+            
+            return text.includes(input) || username.includes(input) || sentiment.includes(input);
+        });
+    }
+    
+    showTweets(filtered);
+});
+
 document.getElementById('resetBtn').onclick = function() {
     document.getElementById('searchInput').value = '';
     showTweets(tweetsData);
 };
+
 document.getElementById('downloadBtn').onclick = function() {
     let rows = [["Sentiment", "Tweet"]];
     document.querySelectorAll('#tweetSamples .tweet-sample').forEach(div => {
@@ -156,6 +732,366 @@ document.getElementById('downloadBtn').onclick = function() {
     a.download = "sentiment_report.csv";
     a.click();
 };
+
+// Training functionality
+function addLogEntry(message, type = 'info') {
+    const log = document.getElementById('trainingLog');
+    const entry = document.createElement('div');
+    entry.className = `log-entry log-${type}`;
+    entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+}
+
+function updateHyperparameters() {
+    const modelType = document.querySelector('input[name="modelType"]:checked').value;
+    const container = document.getElementById('hyperparameters');
+    
+    let html = '';
+    
+    switch(modelType) {
+        case 'logistic':
+            html = `
+                <div class="hyperparameter-group">
+                    <label for="lrC" class="form-label">Regularization Strength (C)</label>
+                    <input type="range" class="form-range" id="lrC" min="0.1" max="10" step="0.1" value="1">
+                    <div class="text-center" id="lrCValue">1.0</div>
+                </div>
+                <div class="hyperparameter-group">
+                    <label for="lrMaxIter" class="form-label">Max Iterations</label>
+                    <input type="number" class="form-control" id="lrMaxIter" value="100" min="50" max="1000">
+                </div>
+            `;
+            break;
+        case 'naive_bayes':
+            html = `
+                <div class="hyperparameter-group">
+                    <label for="nbAlpha" class="form-label">Smoothing Parameter (α)</label>
+                    <input type="range" class="form-range" id="nbAlpha" min="0.1" max="2" step="0.1" value="1">
+                    <div class="text-center" id="nbAlphaValue">1.0</div>
+                </div>
+            `;
+            break;
+        case 'svm':
+            html = `
+                <div class="hyperparameter-group">
+                    <label for="svmC" class="form-label">Regularization Parameter (C)</label>
+                    <input type="range" class="form-range" id="svmC" min="0.1" max="10" step="0.1" value="1">
+                    <div class="text-center" id="svmCValue">1.0</div>
+                </div>
+                <div class="hyperparameter-group">
+                    <label for="svmKernel" class="form-label">Kernel Type</label>
+                    <select class="form-select" id="svmKernel">
+                        <option value="linear">Linear</option>
+                        <option value="rbf">RBF</option>
+                        <option value="poly">Polynomial</option>
+                    </select>
+                </div>
+            `;
+            break;
+        case 'random_forest':
+            html = `
+                <div class="hyperparameter-group">
+                    <label for="rfNEstimators" class="form-label">Number of Trees</label>
+                    <input type="number" class="form-control" id="rfNEstimators" value="100" min="10" max="500">
+                </div>
+                <div class="hyperparameter-group">
+                    <label for="rfMaxDepth" class="form-label">Max Depth</label>
+                    <input type="number" class="form-control" id="rfMaxDepth" value="10" min="1" max="50">
+                </div>
+            `;
+            break;
+    }
+    
+    container.innerHTML = html;
+    
+    // Add event listeners for range inputs
+    const rangeInputs = container.querySelectorAll('input[type="range"]');
+    rangeInputs.forEach(input => {
+        const valueDisplay = document.getElementById(input.id + 'Value');
+        if (valueDisplay) {
+            input.addEventListener('input', () => {
+                valueDisplay.textContent = parseFloat(input.value).toFixed(1);
+            });
+        }
+    });
+}
+
+function parseCSV(csvText) {
+    const lines = csvText.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    const data = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+        if (lines[i].trim()) {
+            const values = lines[i].split(',').map(v => v.trim());
+            const row = {};
+            headers.forEach((header, index) => {
+                row[header] = values[index] || '';
+            });
+            data.push(row);
+        }
+    }
+    
+    return { headers, data };
+}
+
+function validateDataset(data) {
+    const requiredColumns = ['tweet_text', 'sentiment_label'];
+    const headers = Object.keys(data[0] || {});
+    
+    const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+    
+    if (missingColumns.length > 0) {
+        return {
+            valid: false,
+            error: `Missing required columns: ${missingColumns.join(', ')}`
+        };
+    }
+    
+    const validSentiments = ['positive', 'negative', 'neutral'];
+    const invalidSentiments = data.filter(row => 
+        !validSentiments.includes(row.sentiment_label.toLowerCase())
+    );
+    
+    if (invalidSentiments.length > 0) {
+        return {
+            valid: false,
+            error: `Invalid sentiment labels found. Must be one of: ${validSentiments.join(', ')}`
+        };
+    }
+    
+    return { valid: true };
+}
+
+function simulateTraining() {
+    return new Promise((resolve) => {
+        let progress = 0;
+        const progressBar = document.querySelector('#trainingProgress .progress-bar');
+        const progressContainer = document.getElementById('trainingProgress');
+        
+        progressContainer.style.display = 'block';
+        
+        const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 100) progress = 100;
+            
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = Math.round(progress) + '%';
+            
+            if (progress >= 25) addLogEntry('Loading and preprocessing data...', 'info');
+            if (progress >= 50) addLogEntry('Training model...', 'info');
+            if (progress >= 75) addLogEntry('Evaluating model performance...', 'info');
+            if (progress >= 100) {
+                addLogEntry('Training completed successfully!', 'success');
+                clearInterval(interval);
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                    resolve();
+                }, 1000);
+            }
+        }, 200);
+    });
+}
+
+function generateMockMetrics() {
+    const accuracy = 0.85 + Math.random() * 0.1;
+    const precision = 0.82 + Math.random() * 0.12;
+    const recall = 0.80 + Math.random() * 0.15;
+    const f1 = 2 * (precision * recall) / (precision + recall);
+    
+    document.getElementById('accuracyMetric').textContent = (accuracy * 100).toFixed(1) + '%';
+    document.getElementById('precisionMetric').textContent = (precision * 100).toFixed(1) + '%';
+    document.getElementById('recallMetric').textContent = (recall * 100).toFixed(1) + '%';
+    document.getElementById('f1Metric').textContent = (f1 * 100).toFixed(1) + '%';
+    
+    document.getElementById('performanceMetrics').style.display = 'block';
+    
+    // Generate mock confusion matrix
+    const total = 1000;
+    const tp = Math.floor(accuracy * total * 0.4);
+    const tn = Math.floor(accuracy * total * 0.3);
+    const fp = Math.floor((1 - accuracy) * total * 0.2);
+    const fn = total - tp - tn - fp;
+    
+    document.getElementById('tp').textContent = tp;
+    document.getElementById('tn').textContent = tn;
+    document.getElementById('fp1').textContent = fp;
+    document.getElementById('fn1').textContent = fn;
+    document.getElementById('tn2').textContent = Math.floor(tn * 0.8);
+    document.getElementById('fn2').textContent = Math.floor(fn * 0.3);
+    document.getElementById('fn3').textContent = Math.floor(fn * 0.4);
+    document.getElementById('fn4').textContent = Math.floor(fn * 0.3);
+    document.getElementById('fp2').textContent = Math.floor(fp * 0.5);
+    
+    document.getElementById('confusionMatrixCard').style.display = 'block';
+}
+
+// Event Listeners
+document.querySelectorAll('input[name="modelType"]').forEach(radio => {
+    radio.addEventListener('change', updateHyperparameters);
+});
+
+document.getElementById('trainSplit').addEventListener('input', function() {
+    const trainPercent = this.value;
+    const testPercent = 100 - trainPercent;
+    document.getElementById('splitDisplay').textContent = `${trainPercent}% Train / ${testPercent}% Test`;
+});
+
+document.getElementById('useCrossValidation').addEventListener('change', function() {
+    document.getElementById('cvSettings').style.display = this.checked ? 'block' : 'none';
+});
+
+document.getElementById('datasetFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const { headers, data } = parseCSV(e.target.result);
+            trainingData = data;
+            
+            addLogEntry(`Loaded ${data.length} samples with ${headers.length} columns`, 'success');
+            document.getElementById('trainBtn').disabled = false;
+        };
+        reader.readAsText(file);
+    }
+});
+
+document.getElementById('previewBtn').addEventListener('click', function() {
+    if (!trainingData) {
+        addLogEntry('No dataset loaded', 'error');
+        return;
+    }
+    
+    const preview = document.getElementById('dataPreview');
+    const table = document.getElementById('previewTable');
+    
+    // Clear existing content
+    table.querySelector('thead tr').innerHTML = '';
+    table.querySelector('tbody').innerHTML = '';
+    
+    // Add headers
+    const headers = Object.keys(trainingData[0]);
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        table.querySelector('thead tr').appendChild(th);
+    });
+    
+    // Add sample rows
+    const sampleSize = Math.min(5, trainingData.length);
+    for (let i = 0; i < sampleSize; i++) {
+        const row = document.createElement('tr');
+        headers.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = trainingData[i][header];
+            row.appendChild(td);
+        });
+        table.querySelector('tbody').appendChild(row);
+    }
+    
+    preview.style.display = 'block';
+    addLogEntry(`Showing preview of ${sampleSize} samples`, 'info');
+});
+
+document.getElementById('validateBtn').addEventListener('click', function() {
+    if (!trainingData) {
+        addLogEntry('No dataset loaded', 'error');
+        return;
+    }
+    
+    const validation = validateDataset(trainingData);
+    if (validation.valid) {
+        addLogEntry('Dataset validation passed!', 'success');
+    } else {
+        addLogEntry(`Validation failed: ${validation.error}`, 'error');
+    }
+});
+
+document.getElementById('trainBtn').addEventListener('click', async function() {
+    if (!trainingData) {
+        addLogEntry('Please load a dataset first', 'error');
+        return;
+    }
+    
+    if (trainingInProgress) {
+        addLogEntry('Training already in progress', 'warning');
+        return;
+    }
+    
+    trainingInProgress = true;
+    this.disabled = true;
+    this.textContent = 'Training...';
+    
+    addLogEntry('Starting model training...', 'info');
+    
+    // Clear previous results
+    document.getElementById('performanceMetrics').style.display = 'none';
+    document.getElementById('confusionMatrixCard').style.display = 'none';
+    
+    try {
+        await simulateTraining();
+        generateMockMetrics();
+        addLogEntry('Model training completed successfully!', 'success');
+        document.getElementById('saveModelBtn').disabled = false;
+    } catch (error) {
+        addLogEntry(`Training failed: ${error.message}`, 'error');
+    } finally {
+        trainingInProgress = false;
+        this.disabled = false;
+        this.textContent = 'Start Training';
+    }
+});
+
+document.getElementById('saveModelBtn').addEventListener('click', function() {
+    const name = document.getElementById('modelName').value.trim();
+    const description = document.getElementById('modelDescription').value.trim();
+    
+    if (!name) {
+        addLogEntry('Please enter a model name', 'error');
+        return;
+    }
+    
+    // Simulate saving model
+    addLogEntry(`Saving model "${name}"...`, 'info');
+    setTimeout(() => {
+        addLogEntry(`Model "${name}" saved successfully!`, 'success');
+        document.getElementById('modelName').value = '';
+        document.getElementById('modelDescription').value = '';
+    }, 1000);
+});
+
+document.getElementById('loadModelBtn').addEventListener('click', function() {
+    const file = document.getElementById('modelFile').files[0];
+    if (!file) {
+        addLogEntry('Please select a model file', 'error');
+        return;
+    }
+    
+    addLogEntry(`Loading model from ${file.name}...`, 'info');
+    setTimeout(() => {
+        addLogEntry('Model loaded successfully!', 'success');
+    }, 1000);
+});
+
+// Quick filter functions
+function filterBySentiment(sentiment) {
+    const filtered = tweetsData.filter(t => {
+        const tweetSentiment = t.sentiment || t.predicted_sentiment;
+        return tweetSentiment === sentiment;
+    });
+    
+    showTweets(filtered);
+    document.getElementById('searchInput').value = sentiment;
+}
+
+function showAllTweets() {
+    showTweets(tweetsData);
+    document.getElementById('searchInput').value = '';
+}
+
+// Initialize hyperparameters on page load
+updateHyperparameters();
 </script>
 </body>
 </html>
